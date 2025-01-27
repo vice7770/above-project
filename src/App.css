@@ -1,8 +1,7 @@
 #root {
-  max-width: 1280px;
-  /* margin: 0 auto; */
-  /* padding: 2rem; */
-  /* text-align: center; */
+  width: 100%;
+  max-width: 100vw; /* Ensure the root element does not exceed the viewport width */
+  overflow-x: hidden; /* Prevent horizontal overflow */
 }
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);

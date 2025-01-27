@@ -4,7 +4,6 @@ import './App.css'
 import { FETCH_ALL_EPISODES } from './api/episodes'
 import { MOCK_EPISODES } from './api/mock'
 import { useQuery } from '@apollo/client'
-import Header from './components/Header'
 function Home () {
     const [count, setCount] = useState(0)
   
@@ -18,7 +17,7 @@ function Home () {
   
     return (
       <>
-        <Header />
+        
         
       </>
     )

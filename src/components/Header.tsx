@@ -3,7 +3,7 @@ import reactLogo from '../assets/react.svg';
 import { Link } from 'react-router-dom';
 const Header = () => {
     return (
-        <header className="flex w-screen justify-between items-center p-4 bg-gray-800 text-white">
+        <header className="flex w-full justify-between items-center p-4 bg-gray-800 text-white">
             <div className="flex gap-4">
                 <h1 className="m-0">My TV Series App</h1>
                 <img src={reactLogo} className="p-0" alt="React logo" />
