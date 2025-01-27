@@ -1,10 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { FETCH_ALL_EPISODES } from './api/episodes'
+import { useQuery } from '@apollo/client'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  const { data } = useQuery(FETCH_ALL_EPISODES, {
+    variables: { search: "" }, // Pass an empty string or a search term
+  });
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <>
