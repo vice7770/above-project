@@ -23,18 +23,3 @@ const client = new ApolloClient({
 export const ApolloWrapper = ({ children }: ApolloProviderProps) => {
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
-
-
-// const client = new ApolloClient({
-//     link: new HttpLink({
-//         uri: 'https://qzdu2mazrzfr3pvzuv6z5txkji.appsync-api.us-east-1.amazonaws.com/graphql',
-//         fetchOptions: {
-//           mode: 'no-cors'
-//         },
-//         headers: {
-//             'x-api-key': 'da2-rfoyixwcavdyxoivvmgh4h2qfu'
-            
-//         }
-//     }),
-//     cache: new InMemoryCache(),
-// });
