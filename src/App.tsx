@@ -1,28 +1,21 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
-import { FETCH_ALL_EPISODES } from './api/episodes'
-import { MOCK_EPISODES } from './api/mock'
-import { useQuery } from '@apollo/client'
-import Header from './components/Header'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './index';
+import AddEpisode from './AddEpisode/index';
+import Details from './Details/index';
+import Layout from './Layout';
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  // const { data } = useQuery(FETCH_ALL_EPISODES, {
-  //   variables: { search: "" }, // Pass an empty string or a search term
-  // });
-
-  useEffect(() => {
-    console.log(MOCK_EPISODES);
-  }, []);
-
   return (
-    <>
-      <Header />
-      
-    </>
-  )
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/addEpisode" element={<AddEpisode />} />
+          <Route path="/details/:id" element={<Details />} />
+        </Routes>
+      </Layout>
+    </Router>
+  );
 }
 
-export default App
+export default App;
