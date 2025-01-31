@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import { FETCH_ALL_EPISODES, UPDATE_EPISODE, DELETE_EPISODE } from "@/graphQL/ep
 import { useMutation, useQuery } from "@apollo/client";
 import { useGetImage } from "@/hooks/useGetImage";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 const Details = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,18 @@ const Details = () => {
   const { data, loading, error } = useQuery<ListEpisodesQuery, ListEpisodesQueryVariables>(FETCH_ALL_EPISODES, {
     variables: { search: id },
   });
+
+  const [episodeId, setEpisodeId] = useState("");
+  // const { data: dataSubscriptionUpdate } = useSubscription(ON_CREATE_EPISODE, {
+  //   onSubscriptionData: ({ subscriptionData }) => {
+  //     console.log("Subscription data: ", subscriptionData);
+  //     if (subscriptionData.data?.onCreateEpisode) {
+  //       const { id } = subscriptionData.data.onCreateEpisode;
+  //       setEpisodeId(id);
+  //     }
+  //   },
+  // });
+  
   const imdbId = data?.listEpisodes?.[0]?.imdbId;
   const { image, loading: loadingImage, error: errorImage} = useGetImage({id: imdbId});
   const [isEditing, setIsEditing] = useState(false);
@@ -31,8 +44,8 @@ const Details = () => {
       series: data?.listEpisodes?.[0]?.series || "",
       title: data?.listEpisodes?.[0]?.title || "",
       description: data?.listEpisodes?.[0]?.description || "",
-      seasonNumber: data?.listEpisodes?.[0]?.seasonNumber || 0,
-      episodeNumber: data?.listEpisodes?.[0]?.episodeNumber || 0,
+      seasonNumber: (data?.listEpisodes?.[0]?.seasonNumber)?.toString() || "",
+      episodeNumber: data?.listEpisodes?.[0]?.episodeNumber?.toString() || "",
       releaseDate: data?.listEpisodes?.[0]?.releaseDate || "",
       imdbId: imdbId || "",
     },
@@ -111,6 +124,10 @@ const Details = () => {
     }
   }
 
+  // useEffect(() => {
+  //   console.log(dataSubscriptionUpdate);
+  // }, [dataSubscriptionUpdate]);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading episode details</p>;
 
@@ -131,6 +148,7 @@ const Details = () => {
         >
           <DeleteIcon />
         </button>
+        <Button onClick={() => id && setEpisodeId(id)} variant="secondary">Subscribe</Button>
       </div>
       <h1 className="text-2xl font-bold mb-4">Episode Details</h1>
 

@@ -13,10 +13,10 @@ export const formSchema = z.object({
   description: z.string().min(1, {
     message: "Description is required.",
   }),
-  seasonNumber: z.number().int().min(1, {
-    message: "Season number must be a positive integer.",
+  seasonNumber: z.string().min(1, {
+    message: "Season string must be a positive integer.",
   }),
-  episodeNumber: z.number().int().min(1, {
+  episodeNumber: z.string().min(1, {
     message: "Episode number must be a positive integer.",
   }),
   releaseDate: z.string().refine((date) => !isNaN(Date.parse(date)), {

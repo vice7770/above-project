@@ -16,14 +16,14 @@ import { formSchema } from "@/lib/schemas";
 
 interface FormEditProps {
     form: UseFormReturn<{
-        id: string;
-        series: string;
-        title: string;
-        description: string;
-        seasonNumber: number;
-        episodeNumber: number;
-        releaseDate: string;
-        imdbId: string;
+      id: string;
+      series: string;
+      title: string;
+      description: string;
+      seasonNumber: string;
+      episodeNumber: string;
+      releaseDate: string;
+      imdbId: string;
     }, unknown, undefined>
     onSubmit: (values: z.infer<typeof formSchema>) => void;
     buttonText?: string;
