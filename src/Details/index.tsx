@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -9,18 +9,22 @@ import EditIcon from "@/assets/edit.svg";
 import DeleteIcon from "@/assets/delete.svg";
 import FormEdit from "@/components/FormEdit";
 import { ListEpisodesQuery, ListEpisodesQueryVariables } from "@/types/graphql";
-import { FETCH_ALL_EPISODES } from "@/graphQL/episodes";
-import { useQuery } from "@apollo/client";
+import { FETCH_ALL_EPISODES, UPDATE_EPISODE, DELETE_EPISODE } from "@/graphQL/episodes";
+import { useMutation, useQuery } from "@apollo/client";
 import { useGetImage } from "@/hooks/useGetImage";
+import { toast } from "sonner";
 
 const Details = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data, loading, error } = useQuery<ListEpisodesQuery, ListEpisodesQueryVariables>(FETCH_ALL_EPISODES, {
     variables: { search: id },
   });
   const imdbId = data?.listEpisodes?.[0]?.imdbId;
   const { image, loading: loadingImage, error: errorImage} = useGetImage({id: imdbId});
   const [isEditing, setIsEditing] = useState(false);
+  const [updateEpisode] = useMutation(UPDATE_EPISODE);
+  const [deleteEpisode] = useMutation(DELETE_EPISODE);
   const form = useForm<z.infer<typeof formSchema>>({
     values: {
       id: data?.listEpisodes?.[0]?.id || "",
@@ -39,12 +43,72 @@ const Details = () => {
     setIsEditing(!isEditing);
   };
 
-  const handleDelete = () => {
-    console.log("Delete episode");
+  const handleDelete = async () => {
+    try {
+      await deleteEpisode({
+        variables: {
+          episodeId: id,
+        },
+      });
+      toast("Episode deleted", {
+        description: "Description",
+        className: "bg-green-500",
+        action: {
+          label: "Clear",
+          onClick: () => console.log("Clear"),
+        },
+      })
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting episode:", error);
+      toast("Error deleting episode", {
+        description: "Description",
+        className: "bg-red-500",
+        action: {
+          label: "Clear",
+          onClick: () => console.log("Clear"),
+        },
+      })
+    }
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
+    try {
+      await updateEpisode({
+        variables: {
+          episode: {
+            id: values.id,
+            series: values.series,
+            title: values.title,
+            description: values.description,
+            seasonNumber: values.seasonNumber,
+            episodeNumber: values.episodeNumber,
+            releaseDate: values.releaseDate,
+            imdbId: values.imdbId,
+          },
+        },
+      });
+      toast("Submission successful", {
+        description: "Description",
+        className: "bg-green-500",
+        action: {
+          label: "Clear",
+          onClick: () => console.log("Clear"),
+        },
+      })
+      setIsEditing(false);
+    } catch (error) {
+        console.error("Update failed: ", error);
+        toast("Submission failed", {
+          className: "bg-red-500",
+          description: "Description",
+          action: {
+            label: "Clear",
+            onClick: () => console.log("Clear"),
+          },
+        })
+    }
   }
 
   if (loading) return <p>Loading...</p>;
@@ -73,11 +137,6 @@ const Details = () => {
       <div className="w-full max-w-2xl space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex justify-center col-span-2 mb-10">
-            {/* <img
-              src="https://m.media-amazon.com/images/M/MV5BNzE4MzA0ZjMtYzllYS00NDMxLWE2M2UtNjU3YjYwZjA2Zjc3XkEyXkFqcGc@._V1_FMjpg_UX600_.jpg"
-              alt="Episode Thumbnail"
-              className="h-[350px] rounded-lg"
-            /> */}
             {loadingImage && <p>Loading...</p>}
             {errorImage && <p>Error loading image</p>}
             <img
