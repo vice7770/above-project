@@ -102,7 +102,7 @@ export type ListEpisodesQueryVariables = Exact<{
 
 
 export type ListEpisodesQuery = { __typename?: 'Query', listEpisodes?: Array<{ __typename?: 'Episode', id: string, series: string, title: string, description: string, seasonNumber: number, episodeNumber: number, releaseDate: string, imdbId: string } | null> | null };
-
+export type ListEpisodes = Array<{ __typename?: 'Episode', id: string, series: string, title: string, description: string, seasonNumber: number, episodeNumber: number, releaseDate: string, imdbId: string } | null> | null;
 export type OnCreateEpisodeSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
