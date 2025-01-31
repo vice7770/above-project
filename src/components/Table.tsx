@@ -103,8 +103,9 @@ const Table: React.FC<TableProps> = ({ data }) => {
                     const original = row.original;
                     //ugly i know, its to make typescript happy
                     const rowId = (original as unknown as { id: string } | null)?.id;
+                    const episodeName = (original as unknown as { title: string } | null)?.title;
                     return (
-                        <tr key={rowId} className="hover:bg-cyan-400 space-y-2" onClick={() => navigate(`/details/${rowId}`)}>
+                        <tr key={rowId} className="hover:bg-cyan-400 space-y-2" onClick={() => navigate(`/details/${episodeName}`)}>
                             {row.getVisibleCells().map(cell => (
                                 <td className={`p-2 text-white text-center`} key={cell.id}>
                                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
