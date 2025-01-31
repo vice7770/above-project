@@ -11,13 +11,15 @@ import FormEdit from "@/components/FormEdit";
 import { ListEpisodesQuery, ListEpisodesQueryVariables } from "@/types/graphql";
 import { FETCH_ALL_EPISODES } from "@/graphQL/episodes";
 import { useQuery } from "@apollo/client";
+import { useGetImage } from "@/hooks/useGetImage";
 
 const Details = () => {
   const { id } = useParams<{ id: string }>();
   const { data, loading, error } = useQuery<ListEpisodesQuery, ListEpisodesQueryVariables>(FETCH_ALL_EPISODES, {
     variables: { search: id },
   });
-
+  const imdbId = data?.listEpisodes?.[0]?.imdbId;
+  const { image, loading: loadingImage, error: errorImage} = useGetImage({id: imdbId});
   const [isEditing, setIsEditing] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     values: {
@@ -28,7 +30,7 @@ const Details = () => {
       seasonNumber: data?.listEpisodes?.[0]?.seasonNumber || 0,
       episodeNumber: data?.listEpisodes?.[0]?.episodeNumber || 0,
       releaseDate: data?.listEpisodes?.[0]?.releaseDate || "",
-      imdbId: data?.listEpisodes?.[0]?.imdbId || "",
+      imdbId: imdbId || "",
     },
     resolver: zodResolver(formSchema),
   });
@@ -71,8 +73,15 @@ const Details = () => {
       <div className="w-full max-w-2xl space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex justify-center col-span-2 mb-10">
-            <img
+            {/* <img
               src="https://m.media-amazon.com/images/M/MV5BNzE4MzA0ZjMtYzllYS00NDMxLWE2M2UtNjU3YjYwZjA2Zjc3XkEyXkFqcGc@._V1_FMjpg_UX600_.jpg"
+              alt="Episode Thumbnail"
+              className="h-[350px] rounded-lg"
+            /> */}
+            {loadingImage && <p>Loading...</p>}
+            {errorImage && <p>Error loading image</p>}
+            <img
+              src={image}
               alt="Episode Thumbnail"
               className="h-[350px] rounded-lg"
             />
