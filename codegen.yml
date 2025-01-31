@@ -1,0 +1,11 @@
+schema:
+  - "https:/api/graphql":
+      headers:
+        x-api-key: "key"
+documents: "src/**/*.ts"
+generates:
+  src/types/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
