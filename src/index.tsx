@@ -1,5 +1,5 @@
 import './App.css'
-import { FETCH_ALL_EPISODES } from './api/episodes'
+import { FETCH_ALL_EPISODES } from './graphQL/episodes'
 import { useQuery } from '@apollo/client'
 import Table from './components/Table'
 import { ListEpisodesQuery, ListEpisodesQueryVariables } from './types/graphql'
@@ -12,10 +12,7 @@ function Home () {
   if (error) return <p>Error: {error.message}</p>;
   console.log(data);
     return (
-      <>
-        <Table data={data} />
-        
-      </>
+      <Table data={data?.listEpisodes || []} />
     )
 }
 

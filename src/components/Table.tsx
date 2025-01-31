@@ -1,8 +1,18 @@
-import React, { useMemo } from 'react';
-import { flexRender, getCoreRowModel, useReactTable, createColumnHelper, type CellContext, type SortingState, getSortedRowModel, type SortingFn } from "@tanstack/react-table";
-import { useNavigate } from 'react-router';
+import React, { useMemo } from "react";
+import {
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+    createColumnHelper,
+    type CellContext,
+    type SortingState,
+    getSortedRowModel,
+    type SortingFn,
+} from "@tanstack/react-table";
+import { useNavigate } from "react-router";
 
-interface TVSeries {
+type Episode = {
+    __typename?: "Episode";
     id: string;
     series: string;
     title: string;
@@ -13,46 +23,49 @@ interface TVSeries {
     imdbId: string;
 };
 
-interface TableProps {
-    data: TVSeries[];
-    
-}
+type ListEpisodes = Episode;
+
+type TableProps = {
+    data: (Episode | null)[] | null | undefined;
+};
 
 const Table: React.FC<TableProps> = ({ data }) => {
-    const columnHelper = createColumnHelper<TVSeries>()
+    const columnHelper = createColumnHelper<ListEpisodes>();
     const navigate = useNavigate();
     const columns = useMemo(() => {
         return [
-        columnHelper.accessor('id', {
-            cell: info => info.getValue(),
-            header: () => <span>Id</span>,
-        }),
-        columnHelper.accessor('series', {
-            cell: info => info.getValue(),
-            header: () => <span>Series</span>,
-        }),
-        columnHelper.accessor('title', {
-            cell: info => info.getValue(),
-            header: () => <span>Title</span>,
-        }),
-        columnHelper.accessor('seasonNumber', {
-            cell: info => info.getValue(),
-            header: () => <span>Season</span>,
-        }),
-        columnHelper.accessor('episodeNumber', {
-            cell: info => info.getValue(),
-            header: () => <span>Episode</span>,
-        }),
-      ]
+            columnHelper.accessor("id", {
+                cell: (info) => info.getValue(),
+                header: () => <span>Id</span>,
+            }),
+            columnHelper.accessor("series", {
+                cell: (info) => info.getValue(),
+                header: () => <span>Series</span>,
+            }),
+            columnHelper.accessor("title", {
+                cell: (info) => info.getValue(),
+                header: () => <span>Title</span>,
+            }),
+            columnHelper.accessor("seasonNumber", {
+                cell: (info) => info.getValue(),
+                header: () => <span>Season</span>,
+            }),
+            columnHelper.accessor("episodeNumber", {
+                cell: (info) => info.getValue(),
+                header: () => <span>Episode</span>,
+            }),
+        ];
     }, [data]);
 
+    const validatedData = (data?.filter((episode): episode is NonNullable<typeof episode> => episode !== null) || []);
+
     const table = useReactTable({
-        data,
+        data: validatedData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
-    
-    })
+    });
+
     return (
         <div className="flex w-full h-full overflow-auto rounded-3xl border-4">
             <table className="w-full bg-gray-800 border-separate border-spacing-0 p-4">
@@ -86,15 +99,20 @@ const Table: React.FC<TableProps> = ({ data }) => {
                 ))}
             </thead>
             <tbody>
-                {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-cyan-400 space-y-2" onClick={() => navigate(`/details/${row.original.id}` as string)}>
-                    {row.getVisibleCells().map(cell => (
-                    <td className={`p-2 text-white text-center`} key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                    ))}
-                </tr>
-                ))}
+                {table.getRowModel().rows.map(row => {
+                    const original = row.original;
+                    //ugly i know, its to make typescript happy
+                    const rowId = (original as unknown as { id: string } | null)?.id;
+                    return (
+                        <tr key={rowId} className="hover:bg-cyan-400 space-y-2" onClick={() => navigate(`/details/${rowId}`)}>
+                            {row.getVisibleCells().map(cell => (
+                                <td className={`p-2 text-white text-center`} key={cell.id}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </td>
+                            ))}
+                        </tr>
+                    );
+                })}
             </tbody>
             </table>
         </div>
