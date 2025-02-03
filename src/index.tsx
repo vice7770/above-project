@@ -1,11 +1,12 @@
 import './App.css'
 import { FETCH_ALL_EPISODES } from './graphQL/episodes'
-import { useQuery } from '@apollo/client'
+import { useQuery, useSubscription } from '@apollo/client'
 import Table from './components/Table'
 import { ListEpisodesQuery, ListEpisodesQueryVariables } from './types/graphql'
 import SearchComponent from './components/Search'
 import { useCallback, useState } from 'react'
 import { useDebounce } from 'use-debounce'
+import { ON_CREATE_EPISODE } from './graphQL/subscriptions'
 function Home () {
   const [variableSearch, setVariableSearch] = useState('');
   const [debouncedSearch] = useDebounce(variableSearch, 500);
@@ -17,6 +18,11 @@ function Home () {
     const value = e.target.value;
     setVariableSearch(value); // this crashes the app, why?
   }, [setVariableSearch]);
+
+
+  // const { data: dataSubscriptionCreate, variables } = useSubscription(
+  //   ON_CREATE_EPISODE,
+  // );
 
   if (error) return <p>Error: {error.message}</p>;
     return (

@@ -21,17 +21,6 @@ const Details = () => {
   const { data, loading, error } = useQuery<ListEpisodesQuery, ListEpisodesQueryVariables>(FETCH_ALL_EPISODES, {
     variables: { search: id },
   });
-
-  const [episodeId, setEpisodeId] = useState("");
-  // const { data: dataSubscriptionUpdate } = useSubscription(ON_CREATE_EPISODE, {
-  //   onSubscriptionData: ({ subscriptionData }) => {
-  //     console.log("Subscription data: ", subscriptionData);
-  //     if (subscriptionData.data?.onCreateEpisode) {
-  //       const { id } = subscriptionData.data.onCreateEpisode;
-  //       setEpisodeId(id);
-  //     }
-  //   },
-  // });
   
   const imdbId = data?.listEpisodes?.[0]?.imdbId;
   const { image, loading: loadingImage, error: errorImage} = useGetImage({id: imdbId});
@@ -86,7 +75,6 @@ const Details = () => {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
     try {
       await updateEpisode({
         variables: {
@@ -124,10 +112,6 @@ const Details = () => {
     }
   }
 
-  // useEffect(() => {
-  //   console.log(dataSubscriptionUpdate);
-  // }, [dataSubscriptionUpdate]);
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading episode details</p>;
 
@@ -148,7 +132,7 @@ const Details = () => {
         >
           <DeleteIcon />
         </button>
-        <Button onClick={() => id && setEpisodeId(id)} variant="secondary">Subscribe</Button>
+        {/* <Button onClick={()} variant="secondary">Subscribe</Button> */}
       </div>
       <h1 className="text-2xl font-bold mb-4">Episode Details</h1>
 
